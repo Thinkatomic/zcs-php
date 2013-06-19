@@ -1,3 +1,7 @@
+NOTE:
+-----
+This clone'd repo attempts to bring the api up-to-date with ZCS 8.0.4_GA_5737
+
 CONTENTS OF THIS FILE
 ---------------------
 
