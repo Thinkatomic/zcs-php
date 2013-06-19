@@ -89,7 +89,17 @@ class Admin
         return $results;
     }
 
-    public function count($domain, $query = null)
+    public function count($domain)
+    {
+      $attributes = array('by' => "name");
+
+      $response = $this->zimbraConnect->request('CountAccountRequest', array(), array( 'domain' => $domain), $attributes);
+
+      dump_vars($response);
+      
+    }
+
+    public function old_count($domain, $query = null)
     {
         $response = $this->searchDirectory($domain, 1, 0, 'accounts', null, $query);
 
