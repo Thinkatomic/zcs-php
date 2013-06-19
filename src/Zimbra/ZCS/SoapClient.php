@@ -51,7 +51,7 @@ class SoapClient
         }
     }
 
-    public function request($name, $attributes = array(), $params = array())
+    public function request($name, $attributes = array(), $params = array(), $p_attrs = array())
     {
         $this->lastRequestName = $name;
         unset($this->message->children('soap', true)->Body);
@@ -64,6 +64,10 @@ class SoapClient
 
         foreach ($params as $key => $value) {
             if (is_array($value)) {
+ //             echo "\nKey: ";
+ //             print_r($key);
+ //             echo "\nValue: ";
+ //             print_r($value);
                 switch ($key) {
                     case 'attributes':
                         foreach ($value as $l => $b) {
@@ -75,6 +79,8 @@ class SoapClient
                         }
                         break;
                     default:
+//                        echo "\nDefault Value: ";
+//                        print_r($value);
                         $newParam = $newChild->addChild($key, $value['_']);
                         unset($value['_']);
                         foreach ($value as $l => $b) {
@@ -82,9 +88,18 @@ class SoapClient
                         }
                 }
             } else {
-                $newChild->addChild($key, $value);
+//          echo "\nElse Value: ";
+//          print_r($value);
+                $child = $newChild->addChild($key, $value);
+                if(is_array($p_attrs)) {
+                  foreach($p_attrs as $k => $v) {
+                    $child->addAttribute($k, $v);
+                  }
+                }
             }
         }
+
+//        echo "\n\nXML REQUEST: ".$name."\n".$this->getXml()."\n\n";
 
         curl_setopt($this->curlHandle, CURLOPT_POSTFIELDS, $this->getXml());
         return $this->processReply(curl_exec($this->curlHandle));
@@ -96,7 +111,13 @@ class SoapClient
             throw new \Exception(curl_error($this->curlHandle), curl_errno($this->curlHandle));
         }
 
+//        echo "\n\nSOAP REPLY: ".$soapMessage."\n\n";
+
         $xml = new \SimpleXMLElement($soapMessage);
+
+//        echo "\n\nXML Reply: \n";
+//        var_dump($xml->children('soap', true));
+//        echo "\n";
 
         $fault = $xml->children('soap', true)->Body->Fault;
         if ($fault) {
