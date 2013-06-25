@@ -111,18 +111,19 @@ class SoapClient
             throw new \Exception(curl_error($this->curlHandle), curl_errno($this->curlHandle));
         }
 
-//        echo "\n\nSOAP REPLY: ".$soapMessage."\n\n";
+        echo "\n\nSOAP REPLY: ".$soapMessage."\n\n";
 
         $xml = new \SimpleXMLElement($soapMessage);
-
-//        echo "\n\nXML Reply: \n";
-//        var_dump($xml->children('soap', true));
-//        echo "\n";
 
         $fault = $xml->children('soap', true)->Body->Fault;
         if ($fault) {
             throw new \Zimbra\ZCS\Exception($fault->Detail->children()->Error->Code);
         }
+
+//         echo "More output\n";
+//         foreach($xml->children('soap', true)->Body->children() as $child) {
+//           var_dump($child);
+//         }
 
         return $xml->children('soap', true)->Body;
     }
