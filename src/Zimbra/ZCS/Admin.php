@@ -89,9 +89,9 @@ class Admin
         return $results;
     }
 
-    public function count($domain)
+    public function count($domain, $id_type = 'name')
     {
-      $attributes = array('by' => "name");
+      $attributes = array('by' => $id_type);
 
       $response = $this->zimbraConnect->request('CountAccountRequest', array(), array( 'domain' => $domain), $attributes);
 
