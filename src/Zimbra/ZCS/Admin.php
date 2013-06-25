@@ -95,8 +95,12 @@ class Admin
 
       $response = $this->zimbraConnect->request('CountAccountRequest', array(), array( 'domain' => $domain), $attributes);
 
-      dump_vars($response);
-      
+      $accounts = array();
+
+      foreach($response->children() as $child) {
+         $accounts[(string)$child->cos['name']] = (int)$child->cos;
+      }
+      return $accounts;
     }
 
     public function old_count($domain, $query = null)
