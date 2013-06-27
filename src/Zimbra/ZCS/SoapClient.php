@@ -10,6 +10,8 @@
 
 namespace Zimbra\ZCS;
 
+require_once("../../../simplexml_debug/simplexml_dump.php");
+
 class SoapClient
 {
 
@@ -111,7 +113,7 @@ class SoapClient
             throw new \Exception(curl_error($this->curlHandle), curl_errno($this->curlHandle));
         }
 
-        echo "\n\nSOAP REPLY: ".$soapMessage."\n\n";
+//        echo "\n\nSOAP REPLY: ".$soapMessage."\n\n";
 
         $xml = new \SimpleXMLElement($soapMessage);
 
@@ -120,10 +122,7 @@ class SoapClient
             throw new \Zimbra\ZCS\Exception($fault->Detail->children()->Error->Code);
         }
 
-//         echo "More output\n";
-//         foreach($xml->children('soap', true)->Body->children() as $child) {
-//           var_dump($child);
-//         }
+//        simplexml_dump($xml->children('soap', true)->Body);
 
         return $xml->children('soap', true)->Body;
     }

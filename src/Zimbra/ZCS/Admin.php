@@ -9,6 +9,9 @@
  */
 namespace Zimbra\ZCS;
 
+require_once("../../../simplexml_debug/simplexml_dump.php");
+require_once("../../../simplexml_debug/simplexml_tree.php");
+
 class Admin
 {
 
@@ -87,20 +90,6 @@ class Admin
         }
 
         return $results;
-    }
-
-    public function count($domain, $id_type = 'name')
-    {
-      $attributes = array('by' => $id_type);
-
-      $response = $this->zimbraConnect->request('CountAccountRequest', array(), array( 'domain' => $domain), $attributes);
-
-      $accounts = array();
-
-      foreach($response->children() as $child) {
-         $accounts[(string)$child->cos['name']] = (int)$child->cos;
-      }
-      return $accounts;
     }
 
     public function old_count($domain, $query = null)
@@ -497,4 +486,36 @@ class Admin
         return new \Zimbra\ZCS\Entity\Cos($coses[0]);
     }
 
+    public function count($domain, $id_type = 'name')
+    {
+      $attributes = array('by' => $id_type);
+
+      $response = $this->zimbraConnect->request('CountAccountRequest', array(), array( 'domain' => $domain), $attributes);
+
+      $accounts = array();
+
+      foreach($response->children() as $child) {
+        $accounts[(string)$child->cos['name']] = (int)$child->cos;
+      }
+      return $accounts;
+    }
+
+    public function getAllAccounts($server, $domain, $server_type = 'name', $domain_type = 'name')
+    {
+      $attributes = array('by' => $server_type);
+
+      $response = $this->zimbraConnect->request('GetAllAccountsRequest', array(), array( 'server' => $server, 'domain' => $domain), $attributes);
+
+      $accounts = array();
+
+      simplexml_dump($response);
+
+      simplexml_dump($response->children());
+
+      foreach($response->children()->children() as $account) {
+        $accounts[] = (string)$account['name'];
+      }
+
+      return $accounts;
+    }
 }
