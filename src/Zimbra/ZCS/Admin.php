@@ -9,9 +9,6 @@
  */
 namespace Zimbra\ZCS;
 
-require_once("../../../simplexml_debug/simplexml_dump.php");
-require_once("../../../simplexml_debug/simplexml_tree.php");
-
 class Admin
 {
 
@@ -494,8 +491,12 @@ class Admin
 
       $accounts = array();
 
+      var_dump($response->children());
       foreach($response->children() as $child) {
-        $accounts[(string)$child->cos['name']] = (int)$child->cos;
+        foreach($child->cos as $cos)
+        {
+          $accounts[(string)$cos['name']] = (int)$cos;
+        }
       }
       return $accounts;
     }
@@ -506,11 +507,8 @@ class Admin
 
       $response = $this->zimbraConnect->request('GetAllAccountsRequest', array(), array( 'server' => $server, 'domain' => $domain), $attributes);
 
-      $accounts = array();
-
       simplexml_dump($response);
-
-      simplexml_dump($response->children());
+      $accounts = array();
 
       foreach($response->children()->children() as $account) {
         $accounts[] = (string)$account['name'];
